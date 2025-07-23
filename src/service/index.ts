@@ -11,6 +11,7 @@ class MarpService {
     await fs.mkdir(`${currentDir}/outputs`, { recursive: true });
     await fs.mkdir(`${currentDir}/inputs`, { recursive: true });
     await fs.writeFile(inputFilePath, content);
+    console.log(`Generating Marp file: ${inputFilePath} -> ${outputFilePath}`);
 
     try {
       execSync(

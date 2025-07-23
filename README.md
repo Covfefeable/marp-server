@@ -1,83 +1,93 @@
-# Express-Template
+# Marp Server
 
-一个基于 Express + TypeScript 的服务端项目模板，集成了常用的中间件和工具，帮助你快速搭建安全、可靠的 Node.js 服务。
+基于 Express + TypeScript 的 Marp 幻灯片生成服务，支持将 Markdown 内容一键转换为 PDF、HTML 或 PPTX 幻灯片文件。
 
-## 特性
+## 功能特性
 
-- 🚀 基于 TypeScript，提供完整的类型支持
-- 🛡️ 内置安全防护（Helmet 中间件）
+- 📝 支持 Markdown 转换为 PDF/HTML/PPTX 幻灯片
+- 🚀 TypeScript 全类型支持
+- 🛡️ Helmet 安全防护
 - 🔒 CORS 跨域配置
-- 📝 使用 Pino 进行日志记录
-- ⚙️ 基于 dotenv 和 envalid 的环境变量管理
-- 🔄 开发环境支持热重载
-- 🎯 Session 支持
+- 📋 Session 管理
+- ⚙️ 环境变量管理（dotenv + envalid）
+- 📝 Pino 日志系统
+- 🐳 Docker 一键部署
 
-## 项目结构
+## 目录结构
 
 ```
 src/
   ├── app.ts              # 应用入口
-  ├── controler/          # 控制器层
-  ├── modal/              # 数据模型
+  ├── controller/         # 控制器
+  ├── model/              # 数据模型与校验
   ├── routes/             # 路由配置
-  ├── service/            # 业务逻辑
+  ├── service/            # 幻灯片生成逻辑
   ├── types/              # 类型定义
   └── utils/              # 工具函数
 ```
 
-## 环境变量配置
+## 快速开始
 
-在项目根目录创建 `.env` 文件，支持以下配置项：
+1. **安装依赖**
 
-```bash
-NODE_ENV=development     # 运行环境：development/production
-HOST=localhost          # 服务主机地址
-PORT=1337               # 服务端口
-CORS_ORIGIN=http://localhost:1337  # CORS 配置
-SESSION_SECRET=your-secret         # Session 密钥
+   ```bash
+   npm i -g pnpm
+   pnpm install
+   ```
 
-DB_HOST=127.0.0.1       # 数据库主机地址
-DB_PORT=3306            # 数据库端口
-DB_USER=your-mariadb-user         # 数据库用户名
-DB_PASSWORD=your-mariadb-password  # 数据库密码
+2. **本地开发启动**
+
+   ```bash
+   pnpm dev
+   ```
+
+3. **访问服务**
+
+   - 根页面: [http://localhost:1337/](http://localhost:1337/)
+   - 健康检查: `GET /api/probe`
+   - 幻灯片生成: `POST /api/generate`
+
+## API 说明
+
+### `POST /api/generate`
+
+- **请求体**（JSON）:
+
+  ```json
+  {
+    "fileName": "example.pdf", // 支持 .pdf, .html, .pptx
+    "content": "# Your Marp Markdown"
+  }
+  ```
+
+- **返回**: 生成的文件（二进制流，带下载）
+
+### `GET /api/probe`
+
+- 检查服务存活状态。
+
+## 环境变量
+
+在根目录创建 `.env` 文件，支持如下配置：
+
+```env
+NODE_ENV=development
+PORT=1337
+CORS_ORIGIN=*
+SESSION_SECRET=your-secret
 ```
 
-## 本地开发
+## Docker 部署
 
 ```bash
-# 安装 pnpm（如未安装）
-npm i -g pnpm
-
-# 安装依赖
-pnpm i
-
-# 启动开发服务器
-pnpm dev
-
-# 测试服务是否正常运行
-curl http://127.0.0.1:1337/api/alive
+docker build -t marp-server .
+docker run -p 1337:1337 marp-server
 ```
 
-## 部署
+## 依赖技术
 
-```bash
-# 安装 pm2（如未安装）
-npm i -g pm2
+- Express, TypeScript, Helmet, CORS, Pino, dotenv, envalid, express-session, @marp-team/marp-cli
 
-# 构建生产版本
-pnpm build
+---
 
-# 启动服务
-pm2 start ./build/app.js
-```
-
-## 技术栈
-
-- Express - Web 框架
-- TypeScript - 类型支持
-- Helmet - 安全中间件
-- CORS - 跨域支持
-- Pino - 日志系统
-- dotenv & envalid - 环境变量管理
-- express-session - 会话管理
-- mariadb - 数据库
+如需自定义或扩展功能，请参考源码。
