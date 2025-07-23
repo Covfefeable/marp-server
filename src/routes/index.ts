@@ -1,6 +1,7 @@
 import { Express, Request, Response, Router } from "express";
 import { commonRes } from "../utils/response";
-import { userRoutes } from "./user";
+import { staticHtml } from "../utils/const";
+import { marpController } from "../controller";
 
 export interface RouterConf {
   path: string;
@@ -19,13 +20,18 @@ const routerConf: Array<RouterConf> = [
       res.status(200).send(commonRes(result));
     }),
   },
-  ...userRoutes
+  {
+    path: "/api",
+    router: Router().post("/generate", async (req: Request, res: Response) => {
+      marpController.generate(req, res);
+    })
+  }
 ];
 
 function routes(app: Express) {
   // 根目录
   app.get("/", (req: Request, res: Response) =>
-    res.status(200).send("express server is running...")
+    res.status(200).send(staticHtml)
   );
 
   routerConf.forEach((conf) => app.use(conf.path, conf.router));
