@@ -1,20 +1,21 @@
-FROM node:18-alpine
+FROM node:22
+
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources
+RUN sed -i 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources
 
 WORKDIR /app
 
 COPY . .
 
-RUN apk add --no-cache \
+RUN apt-get update && \
+    apt-get install -y \
     chromium \
-    firefox \
-    libreoffice-impress \
-    && rm -rf /var/cache/apk/*
+    libreoffice-impress && \
+    rm -rf /var/lib/apt/lists/*
 
-ENV CHROME_BIN=/usr/bin/chromium-browser \
-    FIREFOX_BIN=/usr/bin/firefox
+ENV CHROME_BIN=/usr/bin/chromium
 
 ENV CI=true
-
 ENV prod=true
 
 RUN npm install -g pnpm pm2 @marp-team/marp-cli@latest
